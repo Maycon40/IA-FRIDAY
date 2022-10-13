@@ -83,6 +83,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <h1>IA FRIDAY</h1>
         <form onSubmit={(e) => IAFRIDAY(e)}>
           <input 
             type="number" 

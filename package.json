@@ -9,8 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "fs": "^0.0.1-security",
+    "fast-csv": "^4.3.6",
     "mathjs": "^11.3.0",
+    "neat-csv": "^7.0.0",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
