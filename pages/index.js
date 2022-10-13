@@ -2,19 +2,36 @@ import styles from '../styles/Home.module.css'
 import { RedeNeural } from '../components/rede-neural'
 import { RNPerceptron } from '../components/perceptron'
 import Head from 'next/head'
+import { useState } from 'react'
 
 export default function Home() {
+  const [input1, setInput1] = useState(0);
+  const [input2, setInput2] = useState(1);
+  const [target1, setTarget1] = useState(1);
+  const [output, setOutput] = useState(0);
+  const [erro, setErro] = useState(0);
+  const [epoca, setEpoca] = useState(0);
+
   // feedforward
 
-  const config = {
-    inputs: [0, 1],
-    target: 1,
-    epochs: 300,
-    activation: 'tanh',
+  const IAFRIDAY = (e) => {
+    e.preventDefault();
+
+    const config = {
+      inputs: [input1, input2],
+      target: target1/10,
+      epochs: 50,
+      activation: 'tanh',
+    }
+
+    const neuronio = new RedeNeural()
+    neuronio.train(config)
+    const result = neuronio.feedforward()
+    console.log(`época': ${result.epoch} - taxa de erro: ${result.error} - saída: ${result.output}`)
+    setEpoca(result.epoch)
+    setErro(result.error)
+    setOutput(result.output)
   }
-  const neuronio = new RedeNeural()
-  neuronio.train(config)
-  neuronio.feedforward()
 
   // perceptron
 
@@ -32,7 +49,7 @@ export default function Home() {
   const result3  = neuronio2.predict([1, 0]);
   const result4  = neuronio2.predict([1, 1]);
 
-  console.log(`0 xor 0: ${result}, 0 xor 1: ${result2}, 1 xor 0: ${result3}, 1 xor 1: ${result4}`)
+  //console.log(`0 xor 0: ${result}, 0 xor 1: ${result2}, 1 xor 0: ${result3}, 1 xor 1: ${result4}`)
 
   // network
 
@@ -44,7 +61,7 @@ export default function Home() {
     learning_rate: 0.5
   };
 
-  /*const input = math.matrix([[0, 0], [0, 1], [1, 0], [1, 1]]);
+  /*const input = math.matrix([[0, 0], [0, 1], [1, 0], [1, 1]])
   const target = math.matrix([[0], [1], [1], [0]])
 
   const neuronio3 = new NeuralNetwork(params);
@@ -66,12 +83,34 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        
+        <form onSubmit={(e) => IAFRIDAY(e)}>
+          <input 
+            type="number" 
+            placeholder="Digite o primeiro valor de entrada" 
+            className={styles.input}
+            onChange={(e) => setInput1(e.target.value)}
+          />
+          <input 
+            type="number" 
+            placeholder="Digite o segundo valor de entrada" 
+            className={styles.input}
+            onChange={(e) => setInput2(e.target.value)}
+          />
+          <input 
+            type="number" 
+            placeholder="Digite o valor esperado" 
+            className={styles.input}
+            onChange={(e) => setTarget1(e.target.value)}
+          />
+          <button type="submit">Rodar Inteligencia Artificial</button>
+        </form>
+        <p>Vezes que rodou:</p>
+        <p>{epoca}</p>
+        <p>Erro:</p>
+        <p>{erro}</p>
+        <p>Saída:</p>
+        <p>{output}</p>
       </main>
-
-      <footer className={styles.footer}>
-        
-      </footer>
     </div>
   )
 }

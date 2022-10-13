@@ -73,8 +73,7 @@ export class RedeNeural {
             }
             let epoch = i.toString().padStart(7, '0')
 
-            console.log(`época': ${epoch} - taxa de erro: ${error} - saída: ${output}`)
-            return output
+            return {epoch, error, output}
         }
     }
 
