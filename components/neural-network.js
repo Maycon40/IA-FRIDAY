@@ -1,0 +1,62 @@
+import math from 'mathjs'
+
+export class NeuralNetwork {
+    constructor(params = {}){
+        this.input_nodes = 2;
+        this.hidden_nodes = 4;
+        this.output_nodes = 1;
+        this.epochs = 50000;
+        this.learning_rate = 0.5;
+        this.activation = this.sigmoid;
+
+        if(params.input_nodes){ this.input_nodes = params.input_nodes}
+        if(params.hidden_nodes){ this.hidden_nodes = params.hidden_nodes}
+        if(params.output_nodes){ this.output_nodes = params.output_nodes}
+        if(params.epochs){ this.epochs = params.epochs}
+        if(params.learning_rate){ this.learning_rate = params.learning_rate}
+
+        this.synapse0 = math.random([this.input_nodes, this.hidden_nodes], -1, 1);
+        this.synapse1 = math.random([this.hidden_nodes, this.output_nodes], -1, 1);
+    }
+
+    gradientDescent(n = 0){
+        return n * (1 - n);
+    }
+    
+    sigmoid(x = 0, derivative = false){
+        const fx = 1 / (1 + Math.pow(Math.E, -x));
+        if(derivative){
+            return this.gradientDescent(fx);
+        }
+        return fx;
+    }
+
+    train(input = [], target = []){
+        for(let i = 0; i < this.epochs; i++){
+            const input_layer = input;
+            const hidden_layer = math.multiply(input_layer, this.synapse0).map(v => this.activation(v, false));
+            const output_layer = math.multiply(hidden_layer, this.synapse1).map(v => this.activation(v, false));
+
+            const output_error = math.subtract(target, output_layer);
+            const output_delta = math.dotMultiply(output_error, output_layer.map(v => this.activation(v, true)));
+            const hidden_error = math.multiply(output_delta, math.transpose(this.synapse1));
+            const hidden_delta = math.dotMultiply(hidden_error, hidden_layer.map(v => this.activation(v, true)));
+
+            this.synapse0 = math.add(this.synapse0, math.multiply(math.transpose(input_layer), math.multiply(hidden_delta, this.learning_rate)));
+
+            this.synapse1 = math.add(this.synapse1, math.multiply(math.transpose(hidden_layer), math.multiply(output_delta, this.learning_rate)));
+
+            if(i % 2000 == 0){
+                console.log(`taxa de erro: ${math.mean(math.abs(output_error))}`)
+            }
+        }
+    }
+
+    predict(input = []){
+        const input_layer = input;
+        const hidden_layer = math.multiply(input_layer, this.synapse0).map(v => this.activation(v, false));
+        const output_layer = math.multiply(hidden_layer, this.synapse1).map(v => this.activation(v, false));
+
+        return output_layer;
+    }
+}
